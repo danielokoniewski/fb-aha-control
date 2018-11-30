@@ -61,9 +61,20 @@ def doThings(sid):
     #"http://fritz.box/home/home.lua?sid=<sid>"
     print ("hallo")
 
+def logout(sid):
+    conn = http.client.HTTPConnection(base_url)
+    params = urllib.parse.urlencode({'logout': 1, 'sid': sid})
+    headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+    conn.request('POST', '/login_sid.lua', params, headers)
+    response = conn.getresponse()
+    if response.status == 200:
+        response_text = response.read()
+        print(response_text)
+
 
 if __name__ == '__main__':
     # set sesion is
     # use sesionid for calls
     sid = getSessionID(base_url, username=sys.argv[1] , password=sys.argv[2])
     print(sid)
+    logout(sid)
