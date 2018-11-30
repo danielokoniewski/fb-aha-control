@@ -59,7 +59,23 @@ def getSessionID(base_url, username, password):
 
 def doThings(sid):
     #"http://fritz.box/home/home.lua?sid=<sid>"
-    print ("hallo")
+    #https: // fritz.box / webservices / homeautoswitch.lua?ain = 012340000123 & switchcmd = setswitchon & sid = 9c977765016899f8
+    conn = http.client.HTTPConnection(base_url)
+    params = urllib.parse.urlencode({'switchcmd': 'getswitchlist', 'sid': sid})
+    conn.request(method='GET', url='/webservices/homeautoswitch.lua?'+params)
+    response = conn.getresponse()
+    text = response.read().decode('utf-8')
+    print(response.status, text)
+    #b'116300033181,78:D6:C5-900\n'
+    #getswitchname
+    for ain in text.split(','):
+        params = urllib.parse.urlencode({'switchcmd': 'getswitchname', 'sid': sid, 'ain': ain.replace("\n", '')})
+        conn.request(method='GET', url='/webservices/homeautoswitch.lua?' + params)
+        r = conn.getresponse()
+        print(r.status, ain.replace("\n", '') , r.read())
+
+
+
 
 def logout(sid):
     conn = http.client.HTTPConnection(base_url)
@@ -67,9 +83,6 @@ def logout(sid):
     headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
     conn.request('POST', '/login_sid.lua', params, headers)
     response = conn.getresponse()
-    if response.status == 200:
-        response_text = response.read()
-        print(response_text)
 
 
 if __name__ == '__main__':
@@ -77,4 +90,5 @@ if __name__ == '__main__':
     # use sesionid for calls
     sid = getSessionID(base_url, username=sys.argv[1] , password=sys.argv[2])
     print(sid)
+    doThings(sid)
     logout(sid)
