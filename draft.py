@@ -80,6 +80,25 @@ def doThings(sid):
             paramList = {'switchcmd': 'getswitchname', 'sid': sid, 'ain':ain}
             print(runGetCommand(paramList))
 
+def setOn(sid, ain):
+    paramList = {'switchcmd': 'setswitchon', 'sid': sid, 'ain':ain}
+    status, text = runGetCommand(paramList)
+    print(status, text)
+
+def setOff(sid, ain):
+    paramList = {'switchcmd': 'setswitchoff', 'sid': sid, 'ain':ain}
+    status, text = runGetCommand(paramList)
+    print(status, text)
+
+def getTemp(sid, ain):
+    paramList = {'switchcmd': 'gettemperature', 'sid': sid, 'ain': ain}
+    status, text = runGetCommand(paramList)
+    if status == 200:
+        print('temp: {0} °C'.format(float(text)/10.0))
+    else:
+        print('error #{0}'.format(status))
+
+
 def logout(sid):
     conn = http.client.HTTPConnection(base_url)
     params = urllib.parse.urlencode({'logout': 1, 'sid': sid})
@@ -93,5 +112,6 @@ if __name__ == '__main__':
     # use sesionid for calls
     sid = getSessionID(base_url, username=sys.argv[1] , password=sys.argv[2])
     print(sid)
-    doThings(sid)
+    #doThings(sid)
+    getTemp(sid, '012340000123')
     logout(sid)
