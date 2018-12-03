@@ -113,5 +113,5 @@ if __name__ == '__main__':
     sid = getSessionID(base_url, username=sys.argv[1] , password=sys.argv[2])
     print(sid)
     #doThings(sid)
-    getTemp(sid, '012340000123')
+    getTemp(sid, sys.argv[3])
     logout(sid)
