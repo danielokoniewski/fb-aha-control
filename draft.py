@@ -57,25 +57,28 @@ def getSessionID(base_url, username, password):
         sid=res['sid']
     return sid
 
-def doThings(sid):
+def runGetCommand(paramList):
     #"http://fritz.box/home/home.lua?sid=<sid>"
     #https: // fritz.box / webservices / homeautoswitch.lua?ain = 012340000123 & switchcmd = setswitchon & sid = 9c977765016899f8
     conn = http.client.HTTPConnection(base_url)
-    params = urllib.parse.urlencode({'switchcmd': 'getswitchlist', 'sid': sid})
+    params = urllib.parse.urlencode(paramList)
     conn.request(method='GET', url='/webservices/homeautoswitch.lua?'+params)
     response = conn.getresponse()
-    text = response.read().decode('utf-8')
-    print(response.status, text)
-    #b'116300033181,78:D6:C5-900\n'
-    #getswitchname
-    for ain in text.split(','):
-        params = urllib.parse.urlencode({'switchcmd': 'getswitchname', 'sid': sid, 'ain': ain.replace("\n", '')})
-        conn.request(method='GET', url='/webservices/homeautoswitch.lua?' + params)
-        r = conn.getresponse()
-        print(r.status, ain.replace("\n", '') , r.read())
+    text=''
+    if response.status == 200:
+        text = response.read().decode('utf-8')
 
+    return {response.status, text}
 
+def doThings(sid):
+    paramList = {'switchcmd': 'getswitchlist', 'sid': sid}
+    status, text = runGetCommand(paramList)
+    print(status, text)
 
+    if status == 200:
+        for ain in text.replace("\n",'').split(','):
+            paramList = {'switchcmd': 'getswitchname', 'sid': sid, 'ain':ain}
+            print(runGetCommand(paramList))
 
 def logout(sid):
     conn = http.client.HTTPConnection(base_url)
