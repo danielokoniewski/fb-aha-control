@@ -36,6 +36,12 @@ class ahaC:
         text = self.runCommand(paramList)
         print(text)
 
+    def getDevices(self):
+        '''paramList = {'switchcmd': 'getswitchlist'}'''
+        paramList = {'switchcmd': 'getdevicelistinfos'}
+        text = self.runCommand(paramList)
+        print(text)
+
 
 
 class ahaSession:

@@ -12,3 +12,5 @@ if __name__ == '__main__':
     elif sys.argv[3] == 'off':
         for ain in sys.argv[4].split(','):
             fritz.setSwitchOff(ain)
+    elif sys.argv[3] == 'getAll':
+        fritz.getDevices()
